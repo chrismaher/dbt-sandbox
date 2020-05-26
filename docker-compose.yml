@@ -1,0 +1,24 @@
+version: '3.3'
+services:
+    postgres:
+        restart: always
+        build:
+            context: .
+            dockerfile: Dockerfile.postgres
+        environment:
+            POSTGRES_PASSWORD: 'postgres'
+        ports:
+            - "5432:5432"
+    dbt:
+        build:
+            context: .
+            dockerfile: Dockerfile.dbt
+        tty:
+            true
+        depends_on:
+            - postgres
+        environment:
+            PGHOST: 'postgres'
+            PGDATABASE: 'dvdrental'
+            PGUSER: 'dbt'
+            PGPASSWORD: 'dbt'

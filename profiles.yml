@@ -1,0 +1,12 @@
+sandbox:
+  target: dev
+  outputs:
+    dev:
+      type: postgres
+      host: localhost
+      user: dbt
+      pass: dbt
+      port: 5432
+      dbname: dvdrental
+      schema: dbt
+      threads: 4

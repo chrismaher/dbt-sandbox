@@ -1,0 +1,20 @@
+FROM postgres:13
+
+RUN apt-get update -y && apt-get install -y git
+
+RUN git clone https://github.com/devrimgunduz/pagila.git /pagila && \
+    chmod +x -R /pagila
+
+RUN printf 'CREATE ROLE dbt WITH LOGIN PASSWORD '"'"'dbt'"'"';\n\
+            CREATE DATABASE dvdrental OWNER dbt;\n\
+            GRANT ALL PRIVILEGES ON DATABASE dvdrental TO dbt;\n\
+            \c dvdrental\n\
+            ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO dbt;\n\
+            ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO dbt;\n\
+            CREATE SCHEMA dbt;' > /docker-entrypoint-initdb.d/init.sql && \
+    chmod +x /docker-entrypoint-initdb.d/init.sql && \
+    cat /pagila/pagila-schema.sql >> /docker-entrypoint-initdb.d/init.sql && \
+    cat /pagila/pagila-data.sql >> /docker-entrypoint-initdb.d/init.sql
+
+EXPOSE 5432
+CMD ["postgres"]

@@ -1,0 +1,15 @@
+FROM ubuntu:latest
+
+RUN apt-get update -y && apt-get install -y \
+    python3-pip \
+    python-dev \
+    build-essential \
+    git \
+    libpq-dev \
+    postgresql-client
+
+RUN pip3 install dbt && dbt init dbt-sandbox
+
+COPY profiles.yml /.dbt/profiles.yml
+
+WORKDIR /dbt-sandbox
